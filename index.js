@@ -1,3 +1,4 @@
+import express from "express";
 let inMemoryArr = [
   {
     id: 1,
@@ -34,14 +35,46 @@ let inMemoryArr = [
   { id: 13, title: "Wuthering Heights", author: "Emily Brontë", year: 1847 },
   { id: 14, title: "Invisible Man", author: "Ralph Ellison", year: 1952 },
 ];
-import express from "express";
-
 const app = express();
 
 app.use(express.json());
 
 app.get("/books", (req, res) => {
-  res.json(inMemoryArr);
+  let filteredBooks = inMemoryArr;
+
+  if (req.query.author) {
+    filteredBooks = filteredBooks.filter(
+      (book) => book.author === req.query.author,
+    );
+  }
+
+  if (req.query.year) {
+    filteredBooks = filteredBooks.filter(
+      (book) => book.year === Number(req.query.year),
+    );
+  }
+
+  if (req.query.title) {
+    filteredBooks = filteredBooks.filter(
+      (book) => book.title === req.query.title,
+    );
+  }
+  if (req.query.search) {
+    filteredBooks = filteredBooks.filter((book) => {
+      const searchTerms = req.query.search.toLowerCase();
+      return (
+        book.author.toLowerCase().includes(searchTerms) ||
+        book.title.toLowerCase().includes(searchTerms) ||
+        String(book.year).includes(searchTerms)
+      );
+    });
+  }
+
+  if (filteredBooks.length === 0 && Object.keys(req.query).length > 0) {
+    res.json({ message: "Searched query does not exist" });
+  } else {
+    res.json(filteredBooks);
+  }
 });
 app.get("/books/:id", (req, res) => {
   const reqUrlId = req.params.id;
