@@ -2,49 +2,35 @@
 
 ## Project 1: Todo API (Completed)
 - **Status:** In-memory CRUD logic fully implemented.
-- **Features:** 
-  - Create (POST)
-  - Read (GET)
-  - Update (PATCH with Object.assign)
-  - Delete (DELETE with .filter)
-- **Note:** Decided to move to a new project instead of implementing JSON file storage to broaden skills.
+- **Features:** Create, Read, Update, Delete.
 
 ## Project 2: Book Library API (Current)
-- **Status:** **Phase 2 Completed**.
-- **Goal:** Build a professional CRUD API with advanced querying capabilities.
-- **Key Learnings:**
-  - **Status Code Precision:** Mastery of `201 Created` for POST and `204 No Content` for DELETE.
-  - **Mutation vs. Reassignment:** Understanding how references work with `.find()` vs. needing `.findIndex()` for full array updates (`PUT`).
-  - **Immutability Patterns:** Introduction to using the spread operator (`...`) for safe object merging.
-  - **Type Safety in Queries:** Converting `req.query` strings to `Number` and handling `NaN` and `0`.
-  - **Advanced Sorting:** Implementing logic for both numeric subtraction and `localeCompare()` for strings.
-  - **Pagination Math:** Calculating `startIndex` and `endIndex` for array slicing based on `page` and `limit`.
+- **Status:** **Phase 3 in Progress**.
+- **Goal:** Build a professional CRUD API with middleware, safety, and modularity.
 
-## Technical Decisions
-- **Module System:** ES Modules (`"type": "module"`).
-- **Server:** Node.js + Express.
-- **Working Preference:** Collaborative, step-by-step with explanations.
-- **Constraint:** Do not write or modify code unless explicitly directed by the user. Always wait for a Directive before applying changes.
+### Key Learnings (Added Today):
+- **Middleware Fundamentals:** Understanding the `(req, res, next)` cycle and the importance of `next()`.
+- **Global vs. Route-Specific Middleware:** Using `app.use()` for logs and injecting named functions for specific route validation.
+- **Data Integrity & Security:** 
+  - Implementing `typeof` checks to ensure correct data formats.
+  - **Whitelist Strategy:** Manually rebuilding `req.body` to prevent "Mass Assignment" vulnerabilities (ignoring unauthorized extra properties).
+- **Time Formatting:** Using `.toLocaleString()` for human-readable server logs.
 
-## Evolutionary Roadmap
+### Completed Features:
+- **Phase 1 & 2:** Full CRUD, Semantic Status Codes (201, 204, 404), Filtering, Global Search, Sorting (String vs. Number), and Pagination.
+- **Phase 3 (Partial):**
+  - **Global Logger:** Logs method, URL, and local time for every request.
+  - **POST/PUT Validation:** Ensures `title` (string), `author` (string), and `year` (number) are valid before processing.
 
-### Phase 1: Structured CRUD & Status Codes (Done)
-- **Semantic Responses:** Proper use of HTTP status codes (e.g., `201 Created`, `204 No Content`).
-- **Resource Identification:** Implement `/books/:id` for specific item access.
-- **Update Semantics:** Use `PUT` for full replacements and `PATCH` for partial updates.
+### Evolutionary Roadmap:
 
-### Phase 2: Professional Querying (Done)
-- **Filtering:** Filtering results by specific fields (author, year, title).
-- **Searching:** Global search across multiple fields (search).
-- **Sorting:** Ordering results with `sortBy` and `order` (asc/desc), handling both strings and numbers.
-- **Pagination:** Managing datasets with `page` and `limit`, including robust error handling for invalid inputs.
+#### Phase 3: Middleware & Safety (Current)
+- [x] **Logging:** Request tracking with local timestamps.
+- [x] **POST/PUT Validation:** Data integrity with a Whitelist strategy.
+- [ ] **PATCH Validation:** Handling partial updates (validate only if field exists).
+- [ ] **Centralized Error Handling:** Moving `res.status()` logic to a single middleware.
+- [ ] **Immutability:** Ensuring operations don't mutate the original data source.
 
-### Phase 3: Middleware & Safety (Next)
-- **Validation:** Enforcing data integrity (e.g., ensuring `title` is a string in POST/PATCH).
-- **Error Handling:** Centralized middleware for consistent error responses.
-- **Logging:** Tracking requests for debugging and monitoring.
-- **Immutability:** Ensuring query operations don't mutate the original data source.
-
-### Phase 4: Persistence & Architecture
-- **Persistence:** Moving data to a `data.json` file.
-- **Refactoring:** Organizing code into a Controller/Router structure for better maintainability.
+#### Phase 4: Persistence & Architecture
+- **Persistence:** Moving data to `books.json`.
+- **Refactoring:** Organizing into Controllers, Routes, and Middleware folders.

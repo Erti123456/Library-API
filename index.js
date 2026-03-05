@@ -37,7 +37,34 @@ let inMemoryArr = [
 ];
 const app = express();
 
+app.use((req, res, next) => {
+  const time = new Date().toLocaleString();
+  console.log("Time of request: " + time);
+  console.log("Req method: " + req.method);
+  console.log("Url of the request: " + req.url);
+  next();
+});
+
 app.use(express.json());
+
+const validateBook = (req, res, next) => {
+  const sentBody = req.body;
+
+  if (
+    typeof sentBody.title !== "string" ||
+    typeof sentBody.author !== "string" ||
+    typeof sentBody.year !== "number"
+  ) {
+    res.status(400).json({ message: "Wrong data were sent." });
+  } else {
+    req.body = {
+      title: sentBody.title,
+      author: sentBody.author,
+      year: sentBody.year,
+    };
+    next();
+  }
+};
 
 app.get("/books", (req, res) => {
   let filteredBooks = inMemoryArr;
@@ -137,7 +164,7 @@ app.get("/books/:id", (req, res) => {
     res.status(404).json({ errorMessage: "Book not found!" });
   }
 });
-app.post("/books", (req, res) => {
+app.post("/books", validateBook, (req, res) => {
   let dataFromClient = req.body;
   dataFromClient = {
     id: inMemoryArr[inMemoryArr.length - 1].id + 1,
@@ -164,7 +191,7 @@ app.patch("/books/:id", (req, res) => {
   }
 });
 
-app.put("/books/:id", (req, res) => {
+app.put("/books/:id", validateBook, (req, res) => {
   const reqUrlId = Number(req.params.id);
   let index = inMemoryArr.findIndex((book) => reqUrlId === book.id);
 
