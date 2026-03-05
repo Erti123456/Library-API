@@ -70,6 +70,56 @@ app.get("/books", (req, res) => {
     });
   }
 
+  if (req.query.sortBy || req.query.order) {
+    const whatToSortBy = req.query.sortBy;
+    const whatOrderToSortBy = req.query.order || "asc";
+
+    if (filteredBooks.length > 0) {
+      if (typeof filteredBooks[0][whatToSortBy] === "string") {
+        if (whatOrderToSortBy === "asc") {
+          filteredBooks = filteredBooks.sort((a, b) =>
+            a[whatToSortBy].localeCompare(b[whatToSortBy]),
+          );
+        } else if (whatOrderToSortBy === "desc") {
+          filteredBooks = filteredBooks.sort((a, b) =>
+            b[whatToSortBy].localeCompare(a[whatToSortBy]),
+          );
+        }
+      } else {
+        if (whatOrderToSortBy === "asc") {
+          filteredBooks = filteredBooks.sort(
+            (a, b) => a[whatToSortBy] - b[whatToSortBy],
+          );
+        } else if (whatOrderToSortBy === "desc") {
+          filteredBooks = filteredBooks.sort(
+            (a, b) => b[whatToSortBy] - a[whatToSortBy],
+          );
+        }
+      }
+    }
+  }
+
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : 5;
+
+  if (
+    isNaN(page) ||
+    isNaN(limit) ||
+    page < 1 ||
+    limit < 1 ||
+    !Number.isInteger(page) ||
+    !Number.isInteger(limit) ||
+    req.query.page === "0" ||
+    req.query.limit === "0"
+  ) {
+    return res.json({ message: "Invalid page or limit number" });
+  }
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  filteredBooks = filteredBooks.slice(startIndex, endIndex);
+
   if (filteredBooks.length === 0 && Object.keys(req.query).length > 0) {
     res.json({ message: "Searched query does not exist" });
   } else {
