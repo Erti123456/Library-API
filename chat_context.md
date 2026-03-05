@@ -10,12 +10,15 @@
 - **Note:** Decided to move to a new project instead of implementing JSON file storage to broaden skills.
 
 ## Project 2: Book Library API (Current)
-- **Status:** **Phase 1 Completed**.
-- **Goal:** Build a CRUD API for managing a collection of books.
+- **Status:** **Phase 2 Completed**.
+- **Goal:** Build a professional CRUD API with advanced querying capabilities.
 - **Key Learnings:**
   - **Status Code Precision:** Mastery of `201 Created` for POST and `204 No Content` for DELETE.
   - **Mutation vs. Reassignment:** Understanding how references work with `.find()` vs. needing `.findIndex()` for full array updates (`PUT`).
   - **Immutability Patterns:** Introduction to using the spread operator (`...`) for safe object merging.
+  - **Type Safety in Queries:** Converting `req.query` strings to `Number` and handling `NaN` and `0`.
+  - **Advanced Sorting:** Implementing logic for both numeric subtraction and `localeCompare()` for strings.
+  - **Pagination Math:** Calculating `startIndex` and `endIndex` for array slicing based on `page` and `limit`.
 
 ## Technical Decisions
 - **Module System:** ES Modules (`"type": "module"`).
@@ -30,16 +33,17 @@
 - **Resource Identification:** Implement `/books/:id` for specific item access.
 - **Update Semantics:** Use `PUT` for full replacements and `PATCH` for partial updates.
 
-### Phase 2: Professional Querying (Current)
-- **Filtering:** Filtering results by specific fields (e.g., `?author=Orwell`).
-- **Searching:** Global search across multiple fields (e.g., `?search=1984`).
-- **Sorting:** Ordering results (e.g., `?sort=year:desc`).
-- **Pagination:** Managing large datasets with `page` and `limit`.
+### Phase 2: Professional Querying (Done)
+- **Filtering:** Filtering results by specific fields (author, year, title).
+- **Searching:** Global search across multiple fields (search).
+- **Sorting:** Ordering results with `sortBy` and `order` (asc/desc), handling both strings and numbers.
+- **Pagination:** Managing datasets with `page` and `limit`, including robust error handling for invalid inputs.
 
-### Phase 3: Middleware & Safety
-- **Validation:** Enforcing data integrity (e.g., ensuring `title` is a string).
+### Phase 3: Middleware & Safety (Next)
+- **Validation:** Enforcing data integrity (e.g., ensuring `title` is a string in POST/PATCH).
 - **Error Handling:** Centralized middleware for consistent error responses.
 - **Logging:** Tracking requests for debugging and monitoring.
+- **Immutability:** Ensuring query operations don't mutate the original data source.
 
 ### Phase 4: Persistence & Architecture
 - **Persistence:** Moving data to a `data.json` file.
