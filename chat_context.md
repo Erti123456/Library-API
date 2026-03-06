@@ -1,5 +1,9 @@
 # Project Context: Backend Learning Journey
 
+## AI Role & Guidelines
+- **Role:** Tutor (not a worker).
+- **Primary Directive:** Do not perform any actions (code changes, refactoring, etc.) unless explicitly asked. Focus on analysis, guidance, and answering questions.
+
 ## Project 1: Todo API (Completed)
 - **Status:** In-memory CRUD logic fully implemented.
 - **Features:** Create, Read, Update, Delete.

@@ -35,6 +35,24 @@ let inMemoryArr = [
   { id: 13, title: "Wuthering Heights", author: "Emily Brontë", year: 1847 },
   { id: 14, title: "Invisible Man", author: "Ralph Ellison", year: 1952 },
 ];
+const ERRORS = {
+  INVALID_DATA: {
+    status: 400,
+    message: "Wrong data were sent.",
+  },
+  BOOK_NOT_FOUND: {
+    status: 404,
+    message: "Book not found!",
+  },
+  INVALID_PAGINATION: {
+    status: 400,
+    message: "Invalid page or limit number",
+  },
+  SEARCH_EMPTY: {
+    status: 200,
+    message: "Searched query does not exist",
+  },
+};
 const app = express();
 
 app.use((req, res, next) => {
@@ -55,7 +73,7 @@ const validateBook = (req, res, next) => {
     typeof sentBody.author !== "string" ||
     typeof sentBody.year !== "number"
   ) {
-    res.status(400).json({ message: "Wrong data were sent." });
+    return next(ERRORS.INVALID_DATA);
   } else {
     req.body = {
       title: sentBody.title,
@@ -63,6 +81,43 @@ const validateBook = (req, res, next) => {
       year: sentBody.year,
     };
     next();
+  }
+};
+
+const validateBookPatchMethod = (req, res, next) => {
+  const sentBody = req.body;
+  const keys = Object.keys(sentBody);
+
+  if (keys.length < 4) {
+    if ("author" in sentBody) {
+      if (typeof sentBody.author !== "string") {
+        return next(ERRORS.INVALID_DATA);
+      }
+    }
+
+    if ("title" in sentBody) {
+      if (typeof sentBody.title !== "string") {
+        return next(ERRORS.INVALID_DATA);
+      }
+    }
+
+    if ("year" in sentBody) {
+      if (typeof sentBody.year !== "number") {
+        return next(ERRORS.INVALID_DATA);
+      }
+    }
+    for (let i = 0; keys.length > i; i++) {
+      if (keys[i] === "author" || keys[i] === "title" || keys[i] === "year") {
+      } else {
+        return next(ERRORS.INVALID_DATA);
+      }
+    }
+    if (keys.length === 0) {
+      return next(ERRORS.INVALID_DATA);
+    }
+    next();
+  } else {
+    return next(ERRORS.INVALID_DATA);
   }
 };
 
@@ -139,7 +194,7 @@ app.get("/books", (req, res) => {
     req.query.page === "0" ||
     req.query.limit === "0"
   ) {
-    return res.json({ message: "Invalid page or limit number" });
+    return next(ERRORS.INVALID_PAGINATION);
   }
 
   const startIndex = (page - 1) * limit;
@@ -148,7 +203,7 @@ app.get("/books", (req, res) => {
   filteredBooks = filteredBooks.slice(startIndex, endIndex);
 
   if (filteredBooks.length === 0 && Object.keys(req.query).length > 0) {
-    res.json({ message: "Searched query does not exist" });
+    return next(ERRORS.SEARCH_EMPTY);
   } else {
     res.json(filteredBooks);
   }
@@ -161,7 +216,7 @@ app.get("/books/:id", (req, res) => {
   if (foundBookByID) {
     res.json(foundBookByID);
   } else {
-    res.status(404).json({ errorMessage: "Book not found!" });
+    return next(ERRORS.BOOK_NOT_FOUND);
   }
 });
 app.post("/books", validateBook, (req, res) => {
@@ -180,14 +235,14 @@ app.delete("/books/:id", (req, res) => {
   res.status(204).json(inMemoryArr);
 });
 
-app.patch("/books/:id", (req, res) => {
+app.patch("/books/:id", validateBookPatchMethod, (req, res) => {
   const reqUrlId = Number(req.params.id);
   const foundBookByID = inMemoryArr.find((book) => reqUrlId === book.id);
   if (foundBookByID) {
     Object.assign(foundBookByID, req.body);
     res.json(foundBookByID);
   } else {
-    res.status(404);
+    return next(ERRORS.BOOK_NOT_FOUND);
   }
 });
 
@@ -199,9 +254,15 @@ app.put("/books/:id", validateBook, (req, res) => {
     inMemoryArr[index] = { id: reqUrlId, ...req.body };
     res.json(inMemoryArr[index]);
   } else {
-    res.status(404);
+    return next(ERRORS.BOOK_NOT_FOUND);
   }
 });
+
+const errorHandler = (err, req, res, next) => {
+  res.status(err.status).json({ errorMessage: err.message });
+};
+
+app.use(errorHandler);
 
 const PORT = 3000;
 app.listen(PORT, () => console.log("The server runs on port: " + PORT));
