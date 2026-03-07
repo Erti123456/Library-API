@@ -17,23 +17,27 @@
 - **Global vs. Route-Specific Middleware:** Using `app.use()` for logs and injecting named functions for specific route validation.
 - **Data Integrity & Security:** 
   - Implementing `typeof` checks to ensure correct data formats.
-  - **Whitelist Strategy:** Manually rebuilding `req.body` to prevent "Mass Assignment" vulnerabilities (ignoring unauthorized extra properties).
-- **Time Formatting:** Using `.toLocaleString()` for human-readable server logs.
+  - **Whitelist Strategy:** Manually rebuilding `req.body` to prevent "Mass Assignment" vulnerabilities.
+- **Immutability (The "Why"):** Understanding that modifying data in-place (mutation) can lead to bugs in larger systems; using spread operator and `.map()` to create new state.
+- **Array Methods for Immutability:** 
+  - `[...arr, newItem]` for adding (POST).
+  - `arr.filter()` for removing (DELETE).
+  - `arr.map()` for updating (PATCH/PUT).
 
 ### Completed Features:
-- **Phase 1 & 2:** Full CRUD, Semantic Status Codes (201, 204, 404), Filtering, Global Search, Sorting (String vs. Number), and Pagination.
-- **Phase 3 (Partial):**
-  - **Global Logger:** Logs method, URL, and local time for every request.
-  - **POST/PUT Validation:** Ensures `title` (string), `author` (string), and `year` (number) are valid before processing.
+- **Phase 1 & 2:** Full CRUD, Semantic Status Codes (201, 204, 404), Filtering, Global Search, Sorting, and Pagination.
+- **Phase 3 (Current State):**
+  - [x] **Global Logger:** Logs method, URL, and local time.
+  - [x] **POST/PUT/PATCH Validation:** Data integrity with Whitelist strategy.
+  - [x] **Centralized Error Handling:** Moving `res.status()` logic to a single middleware.
+  - [x] **Immutability (Partial):** POST, DELETE, and PATCH are now fully immutable. PUT has been refactored to use `.map()`.
+  - [x] **Next Parameter:** Added `next` to all route signatures to ensure correct error propagation.
 
 ### Evolutionary Roadmap:
 
-#### Phase 3: Middleware & Safety (Current)
-- [x] **Logging:** Request tracking with local timestamps.
-- [x] **POST/PUT Validation:** Data integrity with a Whitelist strategy.
-- [ ] **PATCH Validation:** Handling partial updates (validate only if field exists).
-- [ ] **Centralized Error Handling:** Moving `res.status()` logic to a single middleware.
-- [ ] **Immutability:** Ensuring operations don't mutate the original data source.
+#### Phase 3: Middleware & Safety (Remaining)
+- [ ] **Sorting Mutation:** Fix the `GET /books` route to sort a copy (`[...inMemoryArr]`) instead of the original.
+- [ ] **PUT Refinement:** Clean up the `PUT` route to remove the `findIndex` dependency and fix the missing `return book` in the `.map()`.
 
 #### Phase 4: Persistence & Architecture
 - **Persistence:** Moving data to `books.json`.
