@@ -1,40 +1,5 @@
 import express from "express";
-let inMemoryArr = [
-  {
-    id: 1,
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    year: 1925,
-  },
-  { id: 2, title: "1984", author: "George Orwell", year: 1949 },
-  { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960 },
-  {
-    id: 4,
-    title: "The Catcher in the Rye",
-    author: "J.D. Salinger",
-    year: 1951,
-  },
-  { id: 5, title: "The Hobbit", author: "J.R.R. Tolkien", year: 1937 },
-  { id: 6, title: "Pride and Prejudice", author: "Jane Austen", year: 1813 },
-  { id: 7, title: "Brave New World", author: "Aldous Huxley", year: 1932 },
-  { id: 8, title: "Moby-Dick", author: "Herman Melville", year: 1851 },
-  { id: 9, title: "War and Peace", author: "Leo Tolstoy", year: 1869 },
-  { id: 10, title: "Ulysses", author: "James Joyce", year: 1922 },
-  {
-    id: 11,
-    title: "The Grapes of Wrath",
-    author: "John Steinbeck",
-    year: 1939,
-  },
-  {
-    id: 12,
-    title: "One Hundred Years of Solitude",
-    author: "Gabriel García Márquez",
-    year: 1967,
-  },
-  { id: 13, title: "Wuthering Heights", author: "Emily Brontë", year: 1847 },
-  { id: 14, title: "Invisible Man", author: "Ralph Ellison", year: 1952 },
-];
+import fs from "node:fs/promises";
 const ERRORS = {
   INVALID_DATA: {
     status: 400,
@@ -121,8 +86,8 @@ const validateBookPatchMethod = (req, res, next) => {
   }
 };
 
-app.get("/books", (req, res, next) => {
-  let filteredBooks = inMemoryArr;
+app.get("/books", async (req, res, next) => {
+  let filteredBooks = [...inMemoryArr];
 
   if (req.query.author) {
     filteredBooks = filteredBooks.filter(
@@ -253,15 +218,16 @@ app.patch("/books/:id", validateBookPatchMethod, (req, res, next) => {
 
 app.put("/books/:id", validateBook, (req, res, next) => {
   const reqUrlId = Number(req.params.id);
-  let index = inMemoryArr.findIndex((book) => reqUrlId === book.id);
-
-  if (index !== -1) {
-    inMemoryArr = inMemoryArr.map((book) => {
-      if (reqUrlId === book.id) {
-        return (book = { id: reqUrlId, ...req.body });
-      }
-    });
-    res.json(inMemoryArr[index]);
+  let found = false;
+  inMemoryArr = inMemoryArr.map((book) => {
+    if (reqUrlId === book.id) {
+      found = true;
+      return { id: reqUrlId, ...req.body };
+    }
+    return book;
+  });
+  if (found) {
+    res.json({ id: reqUrlId, ...req.body });
   } else {
     return next(ERRORS.BOOK_NOT_FOUND);
   }
