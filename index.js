@@ -121,7 +121,7 @@ const validateBookPatchMethod = (req, res, next) => {
   }
 };
 
-app.get("/books", (req, res) => {
+app.get("/books", (req, res, next) => {
   let filteredBooks = inMemoryArr;
 
   if (req.query.author) {
@@ -208,7 +208,7 @@ app.get("/books", (req, res) => {
     res.json(filteredBooks);
   }
 });
-app.get("/books/:id", (req, res) => {
+app.get("/books/:id", (req, res, next) => {
   const reqUrlId = req.params.id;
   const foundBookByID = inMemoryArr.find((book) => {
     return book.id === Number(reqUrlId);
@@ -225,7 +225,7 @@ app.post("/books", validateBook, (req, res) => {
     id: inMemoryArr[inMemoryArr.length - 1].id + 1,
     ...dataFromClient,
   };
-  inMemoryArr.push(dataFromClient);
+  inMemoryArr = [...inMemoryArr, dataFromClient];
   res.status(201).json(dataFromClient);
 });
 
@@ -235,23 +235,32 @@ app.delete("/books/:id", (req, res) => {
   res.status(204).json(inMemoryArr);
 });
 
-app.patch("/books/:id", validateBookPatchMethod, (req, res) => {
+app.patch("/books/:id", validateBookPatchMethod, (req, res, next) => {
   const reqUrlId = Number(req.params.id);
-  const foundBookByID = inMemoryArr.find((book) => reqUrlId === book.id);
-  if (foundBookByID) {
-    Object.assign(foundBookByID, req.body);
-    res.json(foundBookByID);
+  inMemoryArr = inMemoryArr.map((book) => {
+    if (book.id === reqUrlId) {
+      return { ...book, ...req.body };
+    }
+    return book;
+  });
+  const updatedBook = inMemoryArr.find((b) => b.id === reqUrlId);
+  if (updatedBook) {
+    return res.json(updatedBook);
   } else {
     return next(ERRORS.BOOK_NOT_FOUND);
   }
 });
 
-app.put("/books/:id", validateBook, (req, res) => {
+app.put("/books/:id", validateBook, (req, res, next) => {
   const reqUrlId = Number(req.params.id);
   let index = inMemoryArr.findIndex((book) => reqUrlId === book.id);
 
   if (index !== -1) {
-    inMemoryArr[index] = { id: reqUrlId, ...req.body };
+    inMemoryArr = inMemoryArr.map((book) => {
+      if (reqUrlId === book.id) {
+        return (book = { id: reqUrlId, ...req.body });
+      }
+    });
     res.json(inMemoryArr[index]);
   } else {
     return next(ERRORS.BOOK_NOT_FOUND);
