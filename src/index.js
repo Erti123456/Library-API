@@ -6,6 +6,7 @@ import { validateBookPatchMethod } from "./middleware/validator.js";
 import ERRORS from "./utils/errors.js";
 import {
   createBook,
+  deleteBook,
   getBookById,
   getBooks,
 } from "./controllers/booksController.js";
@@ -18,11 +19,7 @@ app.use(express.json());
 app.get("/books", getBooks);
 app.get("/books/:id", getBookById);
 app.post("/books", validateBook, createBook);
-app.delete("/books/:id", (req, res) => {
-  const reqUrlId = Number(req.params.id);
-  inMemoryArr = inMemoryArr.filter((book) => book.id !== reqUrlId);
-  res.status(204).json(inMemoryArr);
-});
+app.delete("/books/:id", deleteBook);
 
 app.patch("/books/:id", validateBookPatchMethod, (req, res, next) => {
   const reqUrlId = Number(req.params.id);

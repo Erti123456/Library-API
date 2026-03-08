@@ -127,3 +127,16 @@ export const createBook = async (req, res, next) => {
     next(err);
   }
 };
+
+export const deleteBook = async (req, res, next) => {
+  try {
+    const reqUrlId = Number(req.params.id);
+    const data = await fs.readFile("../../books.json", "utf-8");
+    let books = JSON.parse(data);
+    books = books.filter((book) => book.id !== reqUrlId);
+    await fs.writeFile("../../books.json", JSON.stringify(books, null, 2));
+    res.status(204).json(books);
+  } catch (err) {
+    next(err);
+  }
+};
