@@ -6,39 +6,39 @@
 
 ## Project 1: Todo API (Completed)
 - **Status:** In-memory CRUD logic fully implemented.
-- **Features:** Create, Read, Update, Delete.
 
 ## Project 2: Book Library API (Current)
-- **Status:** **Phase 3 in Progress**.
-- **Goal:** Build a professional CRUD API with middleware, safety, and modularity.
+- **Status:** **Phase 4 in Progress**.
+- **Goal:** Transition from in-memory data to persistent storage and professional MVC architecture.
 
 ### Key Learnings (Added Today):
-- **Middleware Fundamentals:** Understanding the `(req, res, next)` cycle and the importance of `next()`.
-- **Global vs. Route-Specific Middleware:** Using `app.use()` for logs and injecting named functions for specific route validation.
-- **Data Integrity & Security:** 
-  - Implementing `typeof` checks to ensure correct data formats.
-  - **Whitelist Strategy:** Manually rebuilding `req.body` to prevent "Mass Assignment" vulnerabilities.
-- **Immutability (The "Why"):** Understanding that modifying data in-place (mutation) can lead to bugs in larger systems; using spread operator and `.map()` to create new state.
-- **Array Methods for Immutability:** 
-  - `[...arr, newItem]` for adding (POST).
-  - `arr.filter()` for removing (DELETE).
-  - `arr.map()` for updating (PATCH/PUT).
+- **Asynchronous Programming:** Using `async/await` to handle non-blocking I/O operations (reading/writing files).
+- **File System (fs) Module:** Using `node:fs/promises` to interact with the hard drive.
+- **Persistence:** Moving data from RAM (`inMemoryArr`) to a permanent storage file (`books.json`).
+- **MVC Architecture (Refactoring):** 
+  - **Models:** Interacting with the data source (`books.json`).
+  - **Controllers:** Containing the business logic (filtering, sorting, updating).
+  - **Routes:** Defining the URL paths (Switchboard).
+  - **Middleware:** Separated into `logger.js` and `validator.js`.
+  - **Utils:** Centralized error definitions in `errors.js`.
+- **JSON Serialization:** Using `JSON.parse()` and `JSON.stringify(data, null, 2)` to bridge the gap between text files and JavaScript objects.
+- **Scope & Blocks:** Understanding that `let/const` variables are block-scoped (e.g., inside a `try` block).
 
 ### Completed Features:
-- **Phase 1 & 2:** Full CRUD, Semantic Status Codes (201, 204, 404), Filtering, Global Search, Sorting, and Pagination.
-- **Phase 3 (Current State):**
-  - [x] **Global Logger:** Logs method, URL, and local time.
-  - [x] **POST/PUT/PATCH Validation:** Data integrity with Whitelist strategy.
-  - [x] **Centralized Error Handling:** Moving `res.status()` logic to a single middleware.
-  - [x] **Immutability (Partial):** POST, DELETE, and PATCH are now fully immutable. PUT has been refactored to use `.map()`.
-  - [x] **Next Parameter:** Added `next` to all route signatures to ensure correct error propagation.
+- **Phase 3 (Middleware & Safety):** Completed. Global logging, data validation, and centralized error handling are all functional and modular.
+- **Phase 4 (Persistence & Architecture - Partial):**
+  - [x] **Folder Structure:** Implemented `/src` with `controllers`, `middleware`, `models`, `routes`, and `utils`.
+  - [x] **Data Migration:** Data moved to `books.json`.
+  - [x] **Async Controllers:** `getBooks`, `getBookById`, `createBook`, and `deleteBook` are fully refactored to be asynchronous and persistent.
+  - [x] **Error Propagation:** All async controllers use `try/catch` with `next(err)`.
 
 ### Evolutionary Roadmap:
 
-#### Phase 3: Middleware & Safety (Remaining)
-- [ ] **Sorting Mutation:** Fix the `GET /books` route to sort a copy (`[...inMemoryArr]`) instead of the original.
-- [ ] **PUT Refinement:** Clean up the `PUT` route to remove the `findIndex` dependency and fix the missing `return book` in the `.map()`.
+#### Phase 4: Persistence & Architecture (Remaining)
+- [ ] **Remaining Controllers:** Move `PATCH` and `PUT` logic to `booksController.js` and implement persistence.
+- [ ] **Router Refactor:** Move route definitions from `index.js` to `src/routes/booksRouter.js`.
+- [ ] **Clean index.js:** The final `index.js` should only contain server setup and global middleware.
 
-#### Phase 4: Persistence & Architecture
-- **Persistence:** Moving data to `books.json`.
-- **Refactoring:** Organizing into Controllers, Routes, and Middleware folders.
+#### Phase 5: Authentication & Advanced Security
+- **JWT Implementation:** Protecting routes with tokens.
+- **User Models:** Storing user credentials.
