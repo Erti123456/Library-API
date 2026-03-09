@@ -1,58 +1,16 @@
 import express from "express";
-import fs from "node:fs/promises";
 import logger from "./middleware/logger.js";
-import { validateBook } from "./middleware/validator.js";
-import { validateBookPatchMethod } from "./middleware/validator.js";
-import ERRORS from "./utils/errors.js";
-import {
-  createBook,
-  deleteBook,
-  getBookById,
-  getBooks,
-} from "./controllers/booksController.js";
+import { booksRouter } from "./routes/booksRouter.js";
+import { usersRouter } from "./routes/usersRoutes.js";
+
 const app = express();
 
 app.use(logger);
 
 app.use(express.json());
 
-app.get("/books", getBooks);
-app.get("/books/:id", getBookById);
-app.post("/books", validateBook, createBook);
-app.delete("/books/:id", deleteBook);
-
-app.patch("/books/:id", validateBookPatchMethod, (req, res, next) => {
-  const reqUrlId = Number(req.params.id);
-  inMemoryArr = inMemoryArr.map((book) => {
-    if (book.id === reqUrlId) {
-      return { ...book, ...req.body };
-    }
-    return book;
-  });
-  const updatedBook = inMemoryArr.find((b) => b.id === reqUrlId);
-  if (updatedBook) {
-    return res.json(updatedBook);
-  } else {
-    return next(ERRORS.BOOK_NOT_FOUND);
-  }
-});
-
-app.put("/books/:id", validateBook, (req, res, next) => {
-  const reqUrlId = Number(req.params.id);
-  let found = false;
-  inMemoryArr = inMemoryArr.map((book) => {
-    if (reqUrlId === book.id) {
-      found = true;
-      return { id: reqUrlId, ...req.body };
-    }
-    return book;
-  });
-  if (found) {
-    res.json({ id: reqUrlId, ...req.body });
-  } else {
-    return next(ERRORS.BOOK_NOT_FOUND);
-  }
-});
+app.use("/users", usersRouter);
+app.use("/books", booksRouter);
 
 const errorHandler = (err, req, res, next) => {
   res.status(err.status).json({ errorMessage: err.message });

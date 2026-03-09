@@ -26,19 +26,18 @@
 
 ### Completed Features:
 - **Phase 3 (Middleware & Safety):** Completed. Global logging, data validation, and centralized error handling are all functional and modular.
-- **Phase 4 (Persistence & Architecture - Partial):**
+- **Phase 4 (Persistence & Architecture):** **Completed**. 
   - [x] **Folder Structure:** Implemented `/src` with `controllers`, `middleware`, `models`, `routes`, and `utils`.
   - [x] **Data Migration:** Data moved to `books.json`.
-  - [x] **Async Controllers:** `getBooks`, `getBookById`, `createBook`, and `deleteBook` are fully refactored to be asynchronous and persistent.
-  - [x] **Error Propagation:** All async controllers use `try/catch` with `next(err)`.
+  - [x] **Async Controllers:** All CRUD operations are fully refactored to be asynchronous and persistent.
+  - [x] **Router Refactor:** Route definitions moved to `src/routes/booksRouter.js`.
+  - [x] **Clean index.js:** Main entry point only contains server setup and global middleware.
 
 ### Evolutionary Roadmap:
 
-#### Phase 4: Persistence & Architecture (Remaining)
-- [ ] **Remaining Controllers:** Move `PATCH` and `PUT` logic to `booksController.js` and implement persistence.
-- [ ] **Router Refactor:** Move route definitions from `index.js` to `src/routes/booksRouter.js`.
-- [ ] **Clean index.js:** The final `index.js` should only contain server setup and global middleware.
-
-#### Phase 5: Authentication & Advanced Security
-- **JWT Implementation:** Protecting routes with tokens.
-- **User Models:** Storing user credentials.
+#### Phase 5: Authentication & Advanced Security (Current)
+- [x] **User Data:** Create `users.json` for storage.
+- [x] **Registration:** Implement logic to create users with hashed passwords using `bcrypt`.
+- [x] **Login:** Implement logic to verify credentials and issue JWT tokens.
+- [ ] **Auth Middleware:** Create middleware to protect modification routes.
+- [ ] **Environment Variables:** Move the JWT secret to a `.env` file for better security.

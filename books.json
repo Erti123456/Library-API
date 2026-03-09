@@ -1,21 +1,15 @@
 [
   {
     "id": 1,
-    "title": "The Great Gatsby",
-    "author": "F. Scott Fitzgerald",
-    "year": 1925
+    "title": "Updated Entirely",
+    "author": "Updated Author",
+    "year": 1995
   },
   {
     "id": 2,
     "title": "1984",
     "author": "George Orwell",
-    "year": 1949
-  },
-  {
-    "id": 3,
-    "title": "To Kill a Mockingbird",
-    "author": "Harper Lee",
-    "year": 1960
+    "year": 2030
   },
   {
     "id": 4,
@@ -106,5 +100,17 @@
     "title": "Beloved",
     "author": "Toni Morrison",
     "year": 1987
+  },
+  {
+    "id": 19,
+    "title": "Postman Test Book",
+    "author": "Postman Bot",
+    "year": 2026
+  },
+  {
+    "id": 20,
+    "title": "Postman Test Book",
+    "author": "Postman Bot",
+    "year": 2026
   }
 ]

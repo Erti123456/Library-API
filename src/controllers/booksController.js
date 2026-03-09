@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import ERRORS from "../utils/errors.js";
 export const getBooks = async (req, res, next) => {
   try {
-    const data = await fs.readFile("../../books.json", "utf-8");
+    const data = await fs.readFile("./books.json", "utf-8");
     let filteredBooks = JSON.parse(data);
     if (req.query.author) {
       filteredBooks = filteredBooks.filter(
@@ -94,7 +94,7 @@ export const getBooks = async (req, res, next) => {
 export const getBookById = async (req, res, next) => {
   try {
     const reqUrlId = req.params.id;
-    const data = await fs.readFile("../../books.json", "utf-8");
+    const data = await fs.readFile("./books.json", "utf-8");
     const books = JSON.parse(data);
     const foundBookByID = books.find((book) => {
       return book.id === Number(reqUrlId);
@@ -111,7 +111,7 @@ export const getBookById = async (req, res, next) => {
 
 export const createBook = async (req, res, next) => {
   try {
-    const data = await fs.readFile("../../books.json", "utf-8");
+    const data = await fs.readFile("./books.json", "utf-8");
     let books = JSON.parse(data);
     let dataFromClient = req.body;
     dataFromClient = {
@@ -119,7 +119,7 @@ export const createBook = async (req, res, next) => {
       ...dataFromClient,
     };
     await fs.writeFile(
-      "../../books.json",
+      "./books.json",
       JSON.stringify([...books, dataFromClient], null, 2),
     );
     res.status(201).json(dataFromClient);
@@ -131,11 +131,59 @@ export const createBook = async (req, res, next) => {
 export const deleteBook = async (req, res, next) => {
   try {
     const reqUrlId = Number(req.params.id);
-    const data = await fs.readFile("../../books.json", "utf-8");
+    const data = await fs.readFile("./books.json", "utf-8");
     let books = JSON.parse(data);
     books = books.filter((book) => book.id !== reqUrlId);
-    await fs.writeFile("../../books.json", JSON.stringify(books, null, 2));
+    await fs.writeFile("./books.json", JSON.stringify(books, null, 2));
     res.status(204).json(books);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const patchLogic = async (req, res, next) => {
+  try {
+    const reqUrlId = Number(req.params.id);
+    const data = await fs.readFile("./books.json", "utf-8");
+    let books = JSON.parse(data);
+    let updatedBook = null;
+    books = books.map((book) => {
+      if (book.id === reqUrlId) {
+        updatedBook = { ...book, ...req.body };
+        return { ...book, ...req.body };
+      }
+      return book;
+    });
+    if (updatedBook) {
+      await fs.writeFile("./books.json", JSON.stringify(books, null, 2));
+      return res.json(updatedBook);
+    } else {
+      return next(ERRORS.BOOK_NOT_FOUND);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const putLogic = async (req, res, next) => {
+  try {
+    const reqUrlId = Number(req.params.id);
+    let found = false;
+    const data = await fs.readFile("./books.json", "utf-8");
+    let books = JSON.parse(data);
+    books = books.map((book) => {
+      if (reqUrlId === book.id) {
+        found = true;
+        return { id: reqUrlId, ...req.body };
+      }
+      return book;
+    });
+    if (found) {
+      await fs.writeFile("./books.json", JSON.stringify(books, null, 2));
+      res.json({ id: reqUrlId, ...req.body });
+    } else {
+      return next(ERRORS.BOOK_NOT_FOUND);
+    }
   } catch (err) {
     next(err);
   }

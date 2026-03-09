@@ -15,5 +15,13 @@ const ERRORS = {
     status: 200,
     message: "Searched query does not exist",
   },
+  SOMETHING_WENT_WRONG: {
+    status: 500,
+    message: "Something went wrong. Please try again.",
+  },
+  USER_DOES_NOT_EXIST: {
+    status: 401,
+    message: "User does not exist.",
+  },
 };
 export default ERRORS;
