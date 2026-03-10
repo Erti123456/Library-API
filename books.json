@@ -12,22 +12,10 @@
     "year": 2030
   },
   {
-    "id": 4,
-    "title": "The Catcher in the Rye",
-    "author": "J.D. Salinger",
-    "year": 1951
-  },
-  {
     "id": 5,
     "title": "The Hobbit",
     "author": "J.R.R. Tolkien",
     "year": 1937
-  },
-  {
-    "id": 6,
-    "title": "Pride and Prejudice",
-    "author": "Jane Austen",
-    "year": 1813
   },
   {
     "id": 7,

@@ -23,5 +23,9 @@ const ERRORS = {
     status: 401,
     message: "User does not exist.",
   },
+  FORBIDDEN: {
+    status: 403,
+    message: "Access forbidden. Invalid or expired token.",
+  },
 };
 export default ERRORS;

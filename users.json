@@ -13,5 +13,10 @@
     "id": "e68ebd41-d538-4116-8230-64140e5efc87",
     "username": "testsder",
     "password": "$2b$10$p.w51yekcN54VBYA3BlbuOFwn/ktSHpDfsVwu/InXwmV9ICQBVgAW"
+  },
+  {
+    "id": "8b2da941-ff5f-4177-bc65-a9cef494c868",
+    "username": "testuser1",
+    "password": "$2b$10$Av2pReJQWlalEseuj74Mh.ulOpbDrMhd5YGmZdhGVUN5n3V3ifKZe"
   }
 ]

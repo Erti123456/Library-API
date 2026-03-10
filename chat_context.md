@@ -33,11 +33,19 @@
   - [x] **Router Refactor:** Route definitions moved to `src/routes/booksRouter.js`.
   - [x] **Clean index.js:** Main entry point only contains server setup and global middleware.
 
-### Evolutionary Roadmap:
+### Phase 5: Authentication & Advanced Security (Completed)
+- [x] **User Registration:** Implemented with `bcrypt` password hashing and duplicate checks.
+- [x] **User Login:** Logic implemented to verify credentials and issue JWT tokens.
+- [x] **Auth Middleware:** Created a middleware to protect modification routes.
+- [x] **Secure Routing:** Applied middleware to protect POST, PUT, PATCH, and DELETE routes.
 
-#### Phase 5: Authentication & Advanced Security (Current)
-- [x] **User Data:** Create `users.json` for storage.
-- [x] **Registration:** Implement logic to create users with hashed passwords using `bcrypt`.
-- [x] **Login:** Implement logic to verify credentials and issue JWT tokens.
-- [ ] **Auth Middleware:** Create middleware to protect modification routes.
-- [ ] **Environment Variables:** Move the JWT secret to a `.env` file for better security.
+### Phase 5.5: Refactoring & Environment Variables (Current)
+- **Status:** **High-Productivity Session - Completion Point**.
+- [x] **Environment Variables:** Moved the JWT secret to a `.env` file for better security.
+- [x] **Refactoring to 3-Layered Architecture (User Module):**
+    - `userRepository.js` created and implemented.
+    - `userServices.js` created and implemented with full business logic and error handling.
+    - `usersController.js` refactored to be thin, calling the service layer.
+- [x] **Refactoring to 3-Layered Architecture (Book Repository):** `bookRepository.js` created and implemented with data access logic.
+- [ ] **Refactoring to 3-Layered Architecture (Book Service):** `bookServices.js` created, ready for business logic.
+- [ ] **Refactoring to 3-Layered Architecture (Book Controller):** Remaining task after service implementation.

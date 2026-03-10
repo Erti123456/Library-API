@@ -9,12 +9,18 @@ import {
   patchLogic,
   putLogic,
 } from "../controllers/booksController.js";
+import { authenticateToken } from "../middleware/auth.js";
 
 export const booksRouter = express.Router();
 
 booksRouter.get("/", getBooks);
 booksRouter.get("/:id", getBookById);
-booksRouter.post("/", validateBook, createBook);
-booksRouter.delete("/:id", deleteBook);
-booksRouter.patch("/:id", validateBookPatchMethod, patchLogic);
-booksRouter.put("/:id", validateBook, putLogic);
+booksRouter.post("/", authenticateToken, validateBook, createBook);
+booksRouter.delete("/:id", authenticateToken, deleteBook);
+booksRouter.patch(
+  "/:id",
+  authenticateToken,
+  validateBookPatchMethod,
+  patchLogic,
+);
+booksRouter.put("/:id", authenticateToken, validateBook, putLogic);
