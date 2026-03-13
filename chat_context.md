@@ -40,12 +40,12 @@
 - [x] **Secure Routing:** Applied middleware to protect POST, PUT, PATCH, and DELETE routes.
 
 ### Phase 5.5: Refactoring & Environment Variables (Current)
-- **Status:** **High-Productivity Session - Completion Point**.
+- **Status:** **New Session - Day 3 of Phase 5.5**.
 - [x] **Environment Variables:** Moved the JWT secret to a `.env` file for better security.
 - [x] **Refactoring to 3-Layered Architecture (User Module):**
     - `userRepository.js` created and implemented.
     - `userServices.js` created and implemented with full business logic and error handling.
     - `usersController.js` refactored to be thin, calling the service layer.
 - [x] **Refactoring to 3-Layered Architecture (Book Repository):** `bookRepository.js` created and implemented with data access logic.
-- [ ] **Refactoring to 3-Layered Architecture (Book Service):** `bookServices.js` created, ready for business logic.
+- [ ] **Refactoring to 3-Layered Architecture (Book Service):** `bookServices.js` created, ready for implementation of complex business logic (getBooks, CRUD).
 - [ ] **Refactoring to 3-Layered Architecture (Book Controller):** Remaining task after service implementation.

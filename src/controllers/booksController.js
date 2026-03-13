@@ -1,109 +1,25 @@
-import fs from "node:fs/promises";
-import ERRORS from "../utils/errors.js";
+import {
+  queryBooks,
+  fetchBookById,
+  createBookService,
+  updateBookService,
+  patchBookService,
+  deleteBookService,
+} from "../services/bookServices.js";
+
 export const getBooks = async (req, res, next) => {
   try {
-    const data = await fs.readFile("./books.json", "utf-8");
-    let filteredBooks = JSON.parse(data);
-    if (req.query.author) {
-      filteredBooks = filteredBooks.filter(
-        (book) => book.author === req.query.author,
-      );
-    }
-
-    if (req.query.year) {
-      filteredBooks = filteredBooks.filter(
-        (book) => book.year === Number(req.query.year),
-      );
-    }
-
-    if (req.query.title) {
-      filteredBooks = filteredBooks.filter(
-        (book) => book.title === req.query.title,
-      );
-    }
-    if (req.query.search) {
-      filteredBooks = filteredBooks.filter((book) => {
-        const searchTerms = req.query.search.toLowerCase();
-        return (
-          book.author.toLowerCase().includes(searchTerms) ||
-          book.title.toLowerCase().includes(searchTerms) ||
-          String(book.year).includes(searchTerms)
-        );
-      });
-    }
-
-    if (req.query.sortBy || req.query.order) {
-      const whatToSortBy = req.query.sortBy;
-      const whatOrderToSortBy = req.query.order || "asc";
-
-      if (filteredBooks.length > 0) {
-        if (typeof filteredBooks[0][whatToSortBy] === "string") {
-          if (whatOrderToSortBy === "asc") {
-            filteredBooks = filteredBooks.sort((a, b) =>
-              a[whatToSortBy].localeCompare(b[whatToSortBy]),
-            );
-          } else if (whatOrderToSortBy === "desc") {
-            filteredBooks = filteredBooks.sort((a, b) =>
-              b[whatToSortBy].localeCompare(a[whatToSortBy]),
-            );
-          }
-        } else {
-          if (whatOrderToSortBy === "asc") {
-            filteredBooks = filteredBooks.sort(
-              (a, b) => a[whatToSortBy] - b[whatToSortBy],
-            );
-          } else if (whatOrderToSortBy === "desc") {
-            filteredBooks = filteredBooks.sort(
-              (a, b) => b[whatToSortBy] - a[whatToSortBy],
-            );
-          }
-        }
-      }
-    }
-
-    const page = req.query.page ? Number(req.query.page) : 1;
-    const limit = req.query.limit ? Number(req.query.limit) : 5;
-
-    if (
-      isNaN(page) ||
-      isNaN(limit) ||
-      page < 1 ||
-      limit < 1 ||
-      !Number.isInteger(page) ||
-      !Number.isInteger(limit) ||
-      req.query.page === "0" ||
-      req.query.limit === "0"
-    ) {
-      return next(ERRORS.INVALID_PAGINATION);
-    }
-
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    filteredBooks = filteredBooks.slice(startIndex, endIndex);
-
-    if (filteredBooks.length === 0 && Object.keys(req.query).length > 0) {
-      return next(ERRORS.SEARCH_EMPTY);
-    } else {
-      res.json(filteredBooks);
-    }
+    const filteredBooks = await queryBooks(req.query);
+    res.json(filteredBooks);
   } catch (err) {
     next(err);
   }
 };
+
 export const getBookById = async (req, res, next) => {
   try {
-    const reqUrlId = req.params.id;
-    const data = await fs.readFile("./books.json", "utf-8");
-    const books = JSON.parse(data);
-    const foundBookByID = books.find((book) => {
-      return book.id === Number(reqUrlId);
-    });
-    if (foundBookByID) {
-      res.json(foundBookByID);
-    } else {
-      return next(ERRORS.BOOK_NOT_FOUND);
-    }
+    const book = await fetchBookById(req.params.id);
+    res.json(book);
   } catch (err) {
     next(err);
   }
@@ -111,31 +27,17 @@ export const getBookById = async (req, res, next) => {
 
 export const createBook = async (req, res, next) => {
   try {
-    const data = await fs.readFile("./books.json", "utf-8");
-    let books = JSON.parse(data);
-    let dataFromClient = req.body;
-    dataFromClient = {
-      id: books[books.length - 1].id + 1,
-      ...dataFromClient,
-    };
-    await fs.writeFile(
-      "./books.json",
-      JSON.stringify([...books, dataFromClient], null, 2),
-    );
-    res.status(201).json(dataFromClient);
+    const newBook = await createBookService(req.body);
+    res.status(201).json(newBook);
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteBook = async (req, res, next) => {
+export const updateBook = async (req, res, next) => {
   try {
-    const reqUrlId = Number(req.params.id);
-    const data = await fs.readFile("./books.json", "utf-8");
-    let books = JSON.parse(data);
-    books = books.filter((book) => book.id !== reqUrlId);
-    await fs.writeFile("./books.json", JSON.stringify(books, null, 2));
-    res.status(204).json(books);
+    const updatedBook = await updateBookService(req.params.id, req.body);
+    res.json(updatedBook);
   } catch (err) {
     next(err);
   }
@@ -143,23 +45,8 @@ export const deleteBook = async (req, res, next) => {
 
 export const patchLogic = async (req, res, next) => {
   try {
-    const reqUrlId = Number(req.params.id);
-    const data = await fs.readFile("./books.json", "utf-8");
-    let books = JSON.parse(data);
-    let updatedBook = null;
-    books = books.map((book) => {
-      if (book.id === reqUrlId) {
-        updatedBook = { ...book, ...req.body };
-        return { ...book, ...req.body };
-      }
-      return book;
-    });
-    if (updatedBook) {
-      await fs.writeFile("./books.json", JSON.stringify(books, null, 2));
-      return res.json(updatedBook);
-    } else {
-      return next(ERRORS.BOOK_NOT_FOUND);
-    }
+    const updatedBook = await patchBookService(req.params.id, req.body);
+    res.json(updatedBook);
   } catch (err) {
     next(err);
   }
@@ -167,23 +54,17 @@ export const patchLogic = async (req, res, next) => {
 
 export const putLogic = async (req, res, next) => {
   try {
-    const reqUrlId = Number(req.params.id);
-    let found = false;
-    const data = await fs.readFile("./books.json", "utf-8");
-    let books = JSON.parse(data);
-    books = books.map((book) => {
-      if (reqUrlId === book.id) {
-        found = true;
-        return { id: reqUrlId, ...req.body };
-      }
-      return book;
-    });
-    if (found) {
-      await fs.writeFile("./books.json", JSON.stringify(books, null, 2));
-      res.json({ id: reqUrlId, ...req.body });
-    } else {
-      return next(ERRORS.BOOK_NOT_FOUND);
-    }
+    const updatedBook = await updateBookService(req.params.id, req.body);
+    res.json(updatedBook);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteBook = async (req, res, next) => {
+  try {
+    await deleteBookService(req.params.id);
+    res.status(204).end();
   } catch (err) {
     next(err);
   }
