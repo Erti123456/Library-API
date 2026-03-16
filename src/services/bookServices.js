@@ -1,4 +1,10 @@
-import { getAllBooks, saveBooks } from "../repositories/bookRepository.js";
+import {
+  getAllBooks,
+  saveBook,
+  findBookById,
+  updateBook,
+  deleteBook,
+} from "../repositories/bookRepository.js";
 import ERROR from "../utils/errors.js";
 
 export const queryBooks = async (query) => {
@@ -96,8 +102,7 @@ export const queryBooks = async (query) => {
 
 export const fetchBookById = async (id) => {
   try {
-    const books = await getAllBooks();
-    const foundBook = books.find((book) => book.id === Number(id));
+    const foundBook = await findBookById(id);
     if (!foundBook) {
       throw ERROR.BOOK_NOT_FOUND;
     }
@@ -110,13 +115,7 @@ export const fetchBookById = async (id) => {
 
 export const createBookService = async (bookData) => {
   try {
-    const books = await getAllBooks();
-    const newBook = {
-      id: books.length > 0 ? books[books.length - 1].id + 1 : 1,
-      ...bookData,
-    };
-    await saveBooks([...books, newBook]);
-    return newBook;
+    return await saveBook(bookData);
   } catch (err) {
     if (err.status) throw err;
     throw ERROR.SOMETHING_WENT_WRONG;
@@ -125,22 +124,11 @@ export const createBookService = async (bookData) => {
 
 export const updateBookService = async (id, bookData) => {
   try {
-    let books = await getAllBooks();
-    let found = false;
-    const updatedBooks = books.map((book) => {
-      if (book.id === Number(id)) {
-        found = true;
-        return { id: Number(id), ...bookData };
-      }
-      return book;
-    });
-
-    if (!found) {
+    const book = await findBookById(id);
+    if (!book) {
       throw ERROR.BOOK_NOT_FOUND;
     }
-
-    await saveBooks(updatedBooks);
-    return { id: Number(id), ...bookData };
+    return await updateBook(id, bookData);
   } catch (err) {
     if (err.status) throw err;
     throw ERROR.SOMETHING_WENT_WRONG;
@@ -149,22 +137,11 @@ export const updateBookService = async (id, bookData) => {
 
 export const patchBookService = async (id, bookData) => {
   try {
-    let books = await getAllBooks();
-    let updatedBook = null;
-    const updatedBooks = books.map((book) => {
-      if (book.id === Number(id)) {
-        updatedBook = { ...book, ...bookData };
-        return updatedBook;
-      }
-      return book;
-    });
-
-    if (!updatedBook) {
+    const book = await findBookById(id);
+    if (!book) {
       throw ERROR.BOOK_NOT_FOUND;
     }
-
-    await saveBooks(updatedBooks);
-    return updatedBook;
+    return await updateBook(id, bookData);
   } catch (err) {
     if (err.status) throw err;
     throw ERROR.SOMETHING_WENT_WRONG;
@@ -173,15 +150,12 @@ export const patchBookService = async (id, bookData) => {
 
 export const deleteBookService = async (id) => {
   try {
-    let books = await getAllBooks();
-    const bookExists = books.some((book) => book.id === Number(id));
+    const book = await findBookById(id);
 
-    if (!bookExists) {
+    if (!book) {
       throw ERROR.BOOK_NOT_FOUND;
     }
-
-    const remainingBooks = books.filter((book) => book.id !== Number(id));
-    await saveBooks(remainingBooks);
+    await deleteBook(id);
   } catch (err) {
     if (err.status) throw err;
     throw ERROR.SOMETHING_WENT_WRONG;
