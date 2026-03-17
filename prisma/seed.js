@@ -1,11 +1,11 @@
 import fs from "fs/promises";
-import { PrismaClient } from "../src/generated/prisma/index.js";
-const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
-});
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
+
+const prisma = new PrismaClient();
 
 const main = async () => {
-  const data = await fs.readFile("../books.json", "utf-8");
+  const data = await fs.readFile("./books.json", "utf-8");
   const allBooks = JSON.parse(data);
   const cleanedAllBooks = allBooks.map((book) => {
     const { id, ...rest } = book;
