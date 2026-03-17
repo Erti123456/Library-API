@@ -1,18 +1,24 @@
-import fs from "fs/promises";
+import { prisma } from "../utils/prismaClient.js";
 
-export const getAllUsers = async () => {
+export const findUserByUsername = async (username) => {
   try {
-    const data = await fs.readFile("./users.json", "utf-8");
-    const users = JSON.parse(data);
-    return users;
+    return await prisma.user.findUnique({
+      where: {
+        username: username,
+      },
+    });
   } catch (err) {
     throw err;
   }
 };
-export const saveUsers = async (users) => {
+
+export const saveUser = async (userData) => {
   try {
-    await fs.writeFile("./users.json", JSON.stringify(users, null, 2));
+    return await prisma.user.create({
+      data: userData,
+    });
   } catch (err) {
     throw err;
   }
 };
+

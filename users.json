@@ -18,5 +18,10 @@
     "id": "8b2da941-ff5f-4177-bc65-a9cef494c868",
     "username": "testuser1",
     "password": "$2b$10$Av2pReJQWlalEseuj74Mh.ulOpbDrMhd5YGmZdhGVUN5n3V3ifKZe"
+  },
+  {
+    "id": "4d599720-6921-4064-a0fa-0304a5e49004",
+    "username": "Cormac McCarthy",
+    "password": "$2b$10$.vYAwjtmckU99VZU59d57OIn2NwAmGjx1Ag4oUHPZXv8vAwLUWxKi"
   }
 ]
