@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/users/:match*",
+      "destination": "/backend/src/index.js"
+    },
+    {
+      "source": "/books/:match*",
+      "destination": "/backend/src/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/dist/index.html"
+    }
+  ]
+}
