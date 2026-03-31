@@ -19,6 +19,6 @@ const errorHandler = (err, req, res, next) => {
 
 app.use(errorHandler);
 
-// const PORT = 3000;
-// app.listen(PORT, () => console.log("The server runs on port: " + PORT));
-export default app;
+const PORT = 3000;
+app.listen(PORT, () => console.log("The server runs on port: " + PORT));
+// export default app;

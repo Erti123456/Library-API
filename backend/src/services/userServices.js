@@ -1,7 +1,10 @@
 import bcrypt from "bcrypt";
 import ERROR from "../utils/errors.js";
 import jwt from "jsonwebtoken";
-import { saveUser, findUserByUsername } from "../repositories/userRepository.js";
+import {
+  saveUser,
+  findUserByUsername,
+} from "../repositories/userRepository.js";
 
 export const registerUser = async (username, password) => {
   try {
@@ -16,6 +19,14 @@ export const registerUser = async (username, password) => {
       password: hashedPassword,
     };
     await saveUser(newUser);
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+    return token;
   } catch (err) {
     if (err.status) {
       throw err;
@@ -39,7 +50,7 @@ export const loginUser = async (username, password) => {
       { id: user.id, username: user.username },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "7d",
       },
     );
     return token;

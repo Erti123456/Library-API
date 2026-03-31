@@ -31,9 +31,23 @@
     - [x] **Book Service Refactor:** `bookServices.js` now uses optimized repository methods for DB access.
     - [x] **Seeding:** Initial book data migrated to the database from `books.json`.
 
-### Phase 6: Database Integration (Current)
-- [ ] **User Repository Refactor:**
-    - [ ] `userRepository.js`: Replace JSON logic with Prisma Client.
-- [ ] **User Service Refactor:**
-    - [ ] `userServices.js`: Update to use the new repository methods.
-- [ ] **Cleanup:** Once all modules are verified, remove `books.json` and `users.json`.
+### Phase 6: Database Integration (Completed)
+- [x] **User Repository Refactor:**
+    - [x] `userRepository.js`: Replace JSON logic with Prisma Client.
+- [x] **User Service Refactor:**
+    - [x] `userServices.js`: Update to use the new repository methods.
+- [x] **Cleanup:** JSON files have been removed or replaced by database storage.
+
+### Phase 7: Frontend Development & Vercel Deployment (Current)
+- **Goal:** Build a functional React UI and deploy the entire project (Monorepo) on Vercel.
+- [ ] **Vercel Monorepo Configuration:**
+    - [ ] Update `vercel.json` and ensure it routes correctly to both backend and frontend.
+    - [ ] Configure the build settings for both services.
+- [ ] **Frontend Core Features:**
+    - [ ] Set up basic routing (Home, Login, Register, Bookshelf).
+    - [ ] Implement user authentication (Login/Register) connected to the API.
+    - [ ] Build the Bookshelf UI (Displaying, searching, and filtering books).
+- [ ] **API Connection:**
+    - [ ] Set up an `api` utility (e.g., using `fetch` or `axios`) to handle requests to the backend.
+- [ ] **Deployment:**
+    - [ ] Deploy and verify the live environment with Neon (PostgreSQL).
