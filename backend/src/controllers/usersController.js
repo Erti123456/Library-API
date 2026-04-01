@@ -7,8 +7,9 @@ export const registerUser = async (req, res, next) => {
   try {
     const username = req.body.username;
     const password = req.body.password;
+    const email = req.body.email;
 
-    await registerUserService(username, password);
+    await registerUserService(username, password, email);
 
     res.status(201).json({ message: "User registered!" });
   } catch (err) {

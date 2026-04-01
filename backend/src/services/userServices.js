@@ -6,7 +6,7 @@ import {
   findUserByUsername,
 } from "../repositories/userRepository.js";
 
-export const registerUser = async (username, password) => {
+export const registerUser = async (username, password, email) => {
   try {
     const existingUser = await findUserByUsername(username);
     if (existingUser) {
@@ -17,6 +17,7 @@ export const registerUser = async (username, password) => {
     const newUser = {
       username: username,
       password: hashedPassword,
+      email: email,
     };
     await saveUser(newUser);
     const token = jwt.sign(
