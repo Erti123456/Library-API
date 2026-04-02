@@ -31,32 +31,35 @@ function Bookshelf() {
   const [success, setSuccess] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(hasToken());
 
-  const loadBooks = useCallback(async (pageToLoad) => {
-    setIsLoading(true);
-    setError("");
+  const loadBooks = useCallback(
+    async (pageToLoad) => {
+      setIsLoading(true);
+      setError("");
 
-    try {
-      const data = await getBooks(pageToLoad, 6, {
-        search: searchTerm,
-        sortBy,
-        order: sortOrder,
-      });
+      try {
+        const data = await getBooks(pageToLoad, 6, {
+          search: searchTerm,
+          sortBy,
+          order: sortOrder,
+        });
 
-      if (data.length === 0 && pageToLoad > 1) {
-        setPage(1);
-        return;
+        if (data.length === 0 && pageToLoad > 1) {
+          setPage(1);
+          return;
+        }
+
+        setBooks(data);
+        setHasNextPage(data.length === 6);
+      } catch (error) {
+        setError(error.message);
+        setBooks([]);
+        setHasNextPage(false);
+      } finally {
+        setIsLoading(false);
       }
-
-      setBooks(data);
-      setHasNextPage(data.length === 6);
-    } catch (error) {
-      setError(error.message);
-      setBooks([]);
-      setHasNextPage(false);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [searchTerm, sortBy, sortOrder]);
+    },
+    [searchTerm, sortBy, sortOrder],
+  );
 
   useEffect(() => {
     loadBooks(page);
@@ -125,7 +128,11 @@ function Bookshelf() {
 
     const parsedYear = Number(form.year);
 
-    if (!form.title.trim() || !form.author.trim() || !Number.isInteger(parsedYear)) {
+    if (
+      !form.title.trim() ||
+      !form.author.trim() ||
+      !Number.isInteger(parsedYear)
+    ) {
       setError("Fill in title, author, and a valid year.");
       return;
     }
@@ -237,8 +244,8 @@ function Bookshelf() {
             </p>
             <h1 className="mt-1 text-4xl font-bold md:text-5xl">Bookshelf</h1>
             <p className="mt-3 max-w-2xl text-sm text-gray-300">
-              Browse 6 books at a time and use the form to create, update,
-              or delete entries.
+              Browse 6 books at a time and use the form to create, update, or
+              delete entries.
             </p>
           </div>
         </div>
@@ -254,7 +261,9 @@ function Bookshelf() {
               </div>
               <div className="flex gap-3">
                 <button
-                  onClick={() => setPage((currentPage) => Math.max(1, currentPage - 1))}
+                  onClick={() =>
+                    setPage((currentPage) => Math.max(1, currentPage - 1))
+                  }
                   disabled={page === 1 || isLoading}
                   className="rounded-2xl border border-white/20 px-4 py-3 text-sm font-semibold transition-colors hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
                 >
@@ -361,7 +370,8 @@ function Bookshelf() {
                       Book #{(page - 1) * 6 + index + 1}
                     </p>
                     <p className="mt-3 text-lg font-semibold text-white">
-                      Book Name: <span className="font-normal">{book.title}</span>
+                      Name:
+                      <span className="font-normal">{book.title}</span>
                     </p>
                     <p className="mt-2 text-gray-300">
                       Author: <span className="text-white">{book.author}</span>
@@ -457,9 +467,13 @@ function Bookshelf() {
               </div>
             </form>
 
-            {error && <p className="mt-4 text-sm font-semibold text-red-400">{error}</p>}
+            {error && (
+              <p className="mt-4 text-sm font-semibold text-red-400">{error}</p>
+            )}
             {success && (
-              <p className="mt-4 text-sm font-semibold text-emerald-300">{success}</p>
+              <p className="mt-4 text-sm font-semibold text-emerald-300">
+                {success}
+              </p>
             )}
           </section>
         </div>
