@@ -360,9 +360,15 @@ function Bookshelf() {
                     <p className="text-xs uppercase tracking-[0.3em] text-gray-500">
                       Book #{(page - 1) * 6 + index + 1}
                     </p>
-                    <h3 className="mt-3 text-2xl font-semibold">{book.title}</h3>
-                    <p className="mt-2 text-gray-300">{book.author}</p>
-                    <p className="mt-1 text-sm text-gray-400">{book.year}</p>
+                    <p className="mt-3 text-lg font-semibold text-white">
+                      Book Name: <span className="font-normal">{book.title}</span>
+                    </p>
+                    <p className="mt-2 text-gray-300">
+                      Author: <span className="text-white">{book.author}</span>
+                    </p>
+                    <p className="mt-1 text-sm text-gray-400">
+                      Year: <span className="text-white">{book.year}</span>
+                    </p>
                     <div className="mt-auto flex gap-3 pt-6">
                       <button
                         onClick={() => handleEditClick(book)}
