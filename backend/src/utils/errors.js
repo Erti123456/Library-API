@@ -27,5 +27,9 @@ const ERRORS = {
     status: 403,
     message: "Access forbidden. Invalid or expired token.",
   },
+  DELETE_LIMIT_REACHED: {
+    status: 403,
+    message: "You can delete only 10 books per day.",
+  },
 };
 export default ERRORS;

@@ -21,8 +21,10 @@ model Book {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  password String
-  email    String
+  id               Int      @id @default(autoincrement())
+  username         String   @unique
+  password         String
+  email            String
+  deleteCountToday Int      @default(0)
+  deleteCountDate  DateTime?
 }

@@ -2,7 +2,11 @@ import { prisma } from "../utils/prismaClient.js";
 
 export const getAllBooks = async () => {
   try {
-    return await prisma.book.findMany();
+    return await prisma.book.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
   } catch (err) {
     throw err;
   }

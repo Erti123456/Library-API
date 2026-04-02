@@ -19,9 +19,9 @@ export const registerUser = async (username, password, email) => {
       password: hashedPassword,
       email: email,
     };
-    await saveUser(newUser);
+    const savedUser = await saveUser(newUser);
     const token = jwt.sign(
-      { id: user.id, username: user.username },
+      { id: savedUser.id, username: savedUser.username },
       process.env.JWT_SECRET,
       {
         expiresIn: "7d",

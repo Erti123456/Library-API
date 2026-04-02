@@ -1,0 +1,3 @@
+ALTER TABLE "User"
+ADD COLUMN "deleteCountToday" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN "deleteCountDate" TIMESTAMP(3);

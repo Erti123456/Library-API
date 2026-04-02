@@ -92,7 +92,7 @@ function App() {
   };
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-black">
+    <div className="relative min-h-screen w-screen bg-black">
       {init && (
         <Particles
           id="tsparticles"

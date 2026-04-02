@@ -9,9 +9,9 @@ export const registerUser = async (req, res, next) => {
     const password = req.body.password;
     const email = req.body.email;
 
-    await registerUserService(username, password, email);
+    const token = await registerUserService(username, password, email);
 
-    res.status(201).json({ message: "User registered!" });
+    res.status(201).json({ message: "User registered!", token: token });
   } catch (err) {
     next(err);
   }

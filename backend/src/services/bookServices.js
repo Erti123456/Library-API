@@ -5,7 +5,17 @@ import {
   updateBook,
   deleteBook,
 } from "../repositories/bookRepository.js";
+import {
+  findUserById,
+  updateUserDeleteStats,
+} from "../repositories/userRepository.js";
 import ERROR from "../utils/errors.js";
+
+const getStartOfToday = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+};
 
 export const queryBooks = async (query) => {
   try {
@@ -69,7 +79,7 @@ export const queryBooks = async (query) => {
     }
 
     const page = query.page ? Number(query.page) : 1;
-    const limit = query.limit ? Number(query.limit) : 5;
+    const limit = query.limit ? Number(query.limit) : 6;
 
     if (
       isNaN(page) ||
@@ -148,14 +158,33 @@ export const patchBookService = async (id, bookData) => {
   }
 };
 
-export const deleteBookService = async (id) => {
+export const deleteBookService = async (id, userId) => {
   try {
+    const user = await findUserById(userId);
     const book = await findBookById(id);
+
+    if (!user) {
+      throw ERROR.FORBIDDEN;
+    }
 
     if (!book) {
       throw ERROR.BOOK_NOT_FOUND;
     }
+
+    const today = getStartOfToday();
+    const storedDate = user.deleteCountDate
+      ? new Date(user.deleteCountDate)
+      : null;
+    const shouldResetCount =
+      !storedDate || storedDate.getTime() !== today.getTime();
+    const currentDeleteCount = shouldResetCount ? 0 : user.deleteCountToday;
+
+    if (currentDeleteCount >= 10) {
+      throw ERROR.DELETE_LIMIT_REACHED;
+    }
+
     await deleteBook(id);
+    await updateUserDeleteStats(userId, currentDeleteCount + 1, today);
   } catch (err) {
     if (err.status) throw err;
     throw ERROR.SOMETHING_WENT_WRONG;

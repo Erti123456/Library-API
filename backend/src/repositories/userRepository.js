@@ -22,3 +22,30 @@ export const saveUser = async (userData) => {
   }
 };
 
+export const findUserById = async (id) => {
+  try {
+    return await prisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const updateUserDeleteStats = async (id, deleteCountToday, deleteCountDate) => {
+  try {
+    return await prisma.user.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        deleteCountToday,
+        deleteCountDate,
+      },
+    });
+  } catch (err) {
+    throw err;
+  }
+};

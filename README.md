@@ -1,65 +1,191 @@
-# Book Library API
+# Library API
 
-A robust, 3-layer architecture API for managing a library of books and user authentication, fully migrated to a PostgreSQL database using Prisma ORM.
+Monorepo project with a React frontend and an Express + Prisma backend for managing a book library.
 
-## Features
+## What It Does
 
-- **3-Layer Architecture:** Clean separation between Controllers, Services, and Repositories.
-- **Database:** PostgreSQL (via Neon) with Prisma ORM.
-- **Authentication:** JWT (JSON Web Token) based authentication with bcrypt password hashing.
-- **Security:** Environment variable management using `dotenv`.
-- **API Standards:** Centralized error handling and standard HTTP status codes.
+- User registration and login with JWT auth
+- Book listing with pagination and search
+- Create, update, and delete books for authenticated users
+- Daily delete limit: each user can delete up to 10 books per day
+- PostgreSQL database through Prisma
+- Seed support through `backend/books.json` and the Prisma seed script
+- Vercel routing for frontend + backend under one project
 
-## Technologies
+## Project Structure
 
-- Node.js (v24.1.0)
-- Express.js
+```text
+.
+├── backend
+│   ├── prisma
+│   ├── src
+│   ├── books.json
+│   └── package.json
+├── frontend
+│   ├── src
+│   └── package.json
+└── vercel.json
+```
+
+## Stack
+
+### Frontend
+
+- React
+- React Router
+- Vite
+- Axios
+- Tailwind CSS
+
+### Backend
+
+- Node.js
+- Express
 - Prisma ORM
 - PostgreSQL
-- Bcrypt
-- JSONWebToken
+- bcrypt
+- jsonwebtoken
 
-## Setup
+## API Routes
 
-1. **Install dependencies:**
+All backend routes are mounted under `/api`.
 
-   ```bash
-   npm install
-   ```
+### Auth
 
-2. **Configure Environment Variables:**
-   Create a `.env` file in the root directory:
-
-   ```env
-   DATABASE_URL="your_neon_postgresql_connection_string"
-   JWT_SECRET="your_secret_key"
-   PORT=3000
-   ```
-
-3. **Database Migration:**
-   Generate Prisma client:
-
-   ```bash
-   npx prisma generate
-   ```
-
-4. **Start Server:**
-
-   ```bash
-   npm start
-   ```
-
-## API Endpoints
-
-### Users
-
-- `POST /users`: Register a new user.
-- `POST /users/login`: Log in to receive a JWT.
+- `POST /api/users/register`
+- `POST /api/users/login`
 
 ### Books
 
-- `GET /books`: List all books (Supports filtering by `author`, `year`, `title`, and search).
-- `GET /books/:id`: Get a specific book.
-- `POST /books`: Create a new book (Requires Bearer Token).
-- `PATCH/PUT /books/:id`: Update a book (Requires Bearer Token).
-- `DELETE /books/:id`: Delete a book (Requires Bearer Token).
+- `GET /api/books`
+- `GET /api/books/:id`
+- `POST /api/books`
+- `PUT /api/books/:id`
+- `PATCH /api/books/:id`
+- `DELETE /api/books/:id`
+
+### Books Query Params
+
+- `page`
+- `limit`
+- `search`
+- `author`
+- `title`
+- `year`
+- `sortBy`
+- `order`
+
+## Local Setup
+
+### 1. Install dependencies
+
+Backend:
+
+```bash
+cd backend
+npm install
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+```
+
+### 2. Configure environment variables
+
+Create `backend/.env`:
+
+```env
+DATABASE_URL="your_postgres_connection_string"
+JWT_SECRET="your_secret_key"
+PORT=3000
+```
+
+### 3. Generate Prisma client
+
+```bash
+cd backend
+npx prisma generate
+```
+
+### 4. Apply migrations
+
+```bash
+cd backend
+npx prisma migrate deploy
+```
+
+### 5. Seed the database
+
+This project includes `backend/books.json` and a seed script in `backend/prisma/seed.js`.
+
+```bash
+cd backend
+node --env-file=.env prisma/seed.js
+```
+
+### 6. Run locally
+
+Backend:
+
+```bash
+cd backend
+npm start
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+The frontend dev server proxies `/api` requests to the backend on `http://localhost:3000`.
+
+## Frontend Features
+
+- Home page with auth-aware navigation
+- Login page
+- Register page
+- Bookshelf page
+- Search books by query
+- Jump directly to a page number
+- Add / update form
+- Protected update and delete controls
+
+## Daily Delete Limit
+
+Authenticated users can delete at most 10 books per day.
+
+The backend stores:
+
+- `deleteCountToday`
+- `deleteCountDate`
+
+on the `User` model and resets the counter when the day changes.
+
+## Vercel Deployment
+
+This repo is configured for a single Vercel project.
+
+### Required environment variables in Vercel
+
+- `DATABASE_URL`
+- `JWT_SECRET`
+
+### Deployment notes
+
+- Frontend is built from `frontend/package.json`
+- Backend is deployed from `backend/src/index.js`
+- API traffic goes through `/api/*`
+- SPA routes fall back to `index.html`
+
+The deployment config is in [vercel.json](/home/samuel/Library-API/vercel.json).
+
+## Known Notes
+
+- Book filtering and pagination are currently handled in the service layer after fetching books
+- There are no automated tests yet
+- Search-empty behavior comes from the current backend error flow and can still be cleaned up later
