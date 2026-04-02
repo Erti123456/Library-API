@@ -4,7 +4,7 @@ export const getAllBooks = async () => {
   try {
     return await prisma.book.findMany({
       orderBy: {
-        id: "asc",
+        id: "desc",
       },
     });
   } catch (err) {

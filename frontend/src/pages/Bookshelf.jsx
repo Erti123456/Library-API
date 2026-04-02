@@ -23,6 +23,8 @@ function Bookshelf() {
   const [pageInput, setPageInput] = useState("1");
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -34,7 +36,11 @@ function Bookshelf() {
     setError("");
 
     try {
-      const data = await getBooks(pageToLoad, 6, searchTerm);
+      const data = await getBooks(pageToLoad, 6, {
+        search: searchTerm,
+        sortBy,
+        order: sortOrder,
+      });
 
       if (data.length === 0 && pageToLoad > 1) {
         setPage(1);
@@ -50,7 +56,7 @@ function Bookshelf() {
     } finally {
       setIsLoading(false);
     }
-  }, [searchTerm]);
+  }, [searchTerm, sortBy, sortOrder]);
 
   useEffect(() => {
     loadBooks(page);
@@ -134,14 +140,15 @@ function Bookshelf() {
       if (editingId) {
         await updateBook(editingId, payload);
         setSuccess("Book updated.");
+        await loadBooks(page);
       } else {
         await createBook(payload);
         setSuccess("Book created.");
+        setPage(1);
       }
 
       setIsAuthenticated(hasToken());
       resetForm();
-      await loadBooks(page);
     } catch (error) {
       setError(error.message);
       setIsAuthenticated(hasToken());
@@ -304,6 +311,34 @@ function Bookshelf() {
                 Go
               </button>
             </form>
+
+            <div className="mb-6 flex gap-3">
+              <select
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value);
+                  setPage(1);
+                }}
+                className="flex-1 rounded-2xl border border-white/20 bg-black/20 px-4 py-3 outline-none transition-colors focus:border-white"
+              >
+                <option value="">No sort</option>
+                <option value="title">Sort by title</option>
+                <option value="author">Sort by author</option>
+                <option value="year">Sort by year</option>
+              </select>
+              <select
+                value={sortOrder}
+                onChange={(e) => {
+                  setSortOrder(e.target.value);
+                  setPage(1);
+                }}
+                disabled={!sortBy}
+                className="rounded-2xl border border-white/20 bg-black/20 px-4 py-3 outline-none transition-colors focus:border-white disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </div>
 
             {isLoading ? (
               <div className="rounded-3xl border border-white/10 bg-black/20 p-8 text-center text-gray-300">

@@ -183,9 +183,3 @@ This repo is configured for a single Vercel project.
 - SPA routes fall back to `index.html`
 
 The deployment config is in [vercel.json](/home/samuel/Library-API/vercel.json).
-
-## Known Notes
-
-- Book filtering and pagination are currently handled in the service layer after fetching books
-- There are no automated tests yet
-- Search-empty behavior comes from the current backend error flow and can still be cleaned up later

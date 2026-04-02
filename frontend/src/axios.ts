@@ -24,6 +24,12 @@ export interface Book extends BookPayload {
   id: number;
 }
 
+interface BooksQueryOptions {
+  search?: string;
+  sortBy?: string;
+  order?: string;
+}
+
 const axiosApi = axios.create({ baseURL: "" });
 
 axiosApi.interceptors.request.use((config) => {
@@ -75,12 +81,22 @@ export const login = async ({ username, password }: LoginInfo) => {
   }
 };
 
-export const getBooks = async (page = 1, limit = 6, search = "") => {
+export const getBooks = async (
+  page = 1,
+  limit = 6,
+  { search = "", sortBy = "", order = "" }: BooksQueryOptions = {},
+) => {
   try {
     const res = await axiosApi.get<Book[] | { errorMessage?: string }>(
       "/api/books",
       {
-        params: { page, limit, ...(search ? { search } : {}) },
+        params: {
+          page,
+          limit,
+          ...(search ? { search } : {}),
+          ...(sortBy ? { sortBy } : {}),
+          ...(order ? { order } : {}),
+        },
       },
     );
 
