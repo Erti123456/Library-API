@@ -11,8 +11,8 @@ app.use(logger);
 
 app.use(express.json());
 
-app.use("/users", usersRouter);
-app.use("/books", booksRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/books", booksRouter);
 
 const errorHandler = (err, req, res, next) => {
   res.status(err.status || 500).json({
