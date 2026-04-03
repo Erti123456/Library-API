@@ -370,7 +370,6 @@ function Bookshelf() {
                       Book #{(page - 1) * 6 + index + 1}
                     </p>
                     <p className="mt-3 text-lg font-semibold text-white">
-                      Name:
                       <span className="font-normal">{book.title}</span>
                     </p>
                     <p className="mt-2 text-gray-300">
